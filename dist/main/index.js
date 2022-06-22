@@ -66413,9 +66413,16 @@ function provisionGradle(versionInfo) {
         }));
     });
 }
+function getGradleInstallationsPath() {
+    let base = process.env['GITHUB_WORKSPACE'];
+    if (!base) {
+        base = os.homedir();
+    }
+    return path.join(base, '.gradle-installations');
+}
 function locateGradleAndDownloadIfRequired(versionInfo) {
     return __awaiter(this, void 0, void 0, function* () {
-        const installsDir = path.join(os.homedir(), 'gradle-installations/installs');
+        const installsDir = path.join(getGradleInstallationsPath(), 'installs');
         const installDir = path.join(installsDir, `gradle-${versionInfo.version}`);
         if (fs.existsSync(installDir)) {
             core.info(`Gradle installation already exists at ${installDir}`);
@@ -66432,7 +66439,7 @@ function locateGradleAndDownloadIfRequired(versionInfo) {
 }
 function downloadAndCacheGradleDistribution(versionInfo) {
     return __awaiter(this, void 0, void 0, function* () {
-        const downloadPath = path.join(os.homedir(), `gradle-installations/downloads/gradle-${versionInfo.version}-bin.zip`);
+        const downloadPath = path.join(getGradleInstallationsPath(), `downloads/gradle-${versionInfo.version}-bin.zip`);
         if ((0, cache_utils_1.isCacheDisabled)()) {
             yield downloadGradleDistribution(versionInfo, downloadPath);
             return downloadPath;
